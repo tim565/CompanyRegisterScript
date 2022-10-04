@@ -4,6 +4,10 @@ Created on Mon Oct  3 18:15:59 2022 at Grenoble École de Management (France)
 
 @author: tim565
 """
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 
 print("--- Company Register Started ---")
 q = input("q: ")
@@ -39,29 +43,27 @@ if employeeCountsInput == "y":
 
 print("Full url:", url)
 
-# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 input("Press enter to start company search")
-# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
 company_name_list = []
 company_plz_city_list = []
 company_description_list = []
 
-#from selenium import webdriver
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+driver.get(url)
 
-#System.setProperty("webdriver.gecko.driver", "./geckodriver.exe")
-#DesiredCapabilities capabilities = DesiredCapabilities.firefox()
-#capabilities.setCapability("marionette",true)
-#driver= new FirefoxDriver(capabilities)
+time.sleep(100)
 
-#driver.get(url)
+driver.quit()
 
 
 
 
 
-print("--- Company Register Finished --- (Code: 0) ")
 
 
 
 
+# print("--- Company Register Finished --- (Code: 0) ")

@@ -5,6 +5,7 @@ Created on Mon Oct  3 18:15:59 2022 at Grenoble École de Management (Grenoble, 
 @author: tim565
 """
 import time
+import csv
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
@@ -63,38 +64,35 @@ time.sleep(5)
 # Remove cookie button
 btn_cookie = driver.find_element(By.ID, "CybotCookiebotDialogFooterButtonAcceptAll")
 btn_cookie.click()
-print("Info: Cookie button clicked \nInfo: Ready to start search")
+print("Info: Cookie button clicked \nInfo: Searching for companies...")
 
 # TODO: specify page number before iterating (by change in the URL)
 
 # Iterate through list with 30 (default) items
-company_name_list = []
-company_plz_city_list = []
-company_description_list = []
-
+company_data_list = []
 for i in range(30):
     # TODO: currently only full sites with 30 items can be accessed; check for next item and break if necessary
     path_company_name = "//div[@class='flex flex-col']/div[" + str(i+1) + "]/a[@class='company-title-link']"
-    company_name = driver.find_element(By.XPATH, path_company_name).get_attribute("innerHTML")
-    company_name_list.append(company_name)
-
     path_company_plz_city = "//div[@class='flex flex-col']/div[" + str(i+1) + "]//div[@class='address']"
-    company_plz_city = driver.find_element(By.XPATH, path_company_plz_city).get_attribute("innerHTML")
-    company_plz_city_list.append(company_plz_city)
-
     path_company_description = "//div[@class='flex flex-col']/div[" + str(i+1) + "]/div[@class='description']"
+
+    company_name = driver.find_element(By.XPATH, path_company_name).get_attribute("innerHTML")
+    company_plz_city = driver.find_element(By.XPATH, path_company_plz_city).get_attribute("innerHTML")
     company_description = driver.find_element(By.XPATH, path_company_description).get_attribute("innerHTML")
-    company_description_list.append(company_description)
-    # TODO: filter out <em>q</em> and that are set by website
+    # TODO: filter out <em>q</em> and &amp that are set by website
+    company_data_list.append([company_name, company_plz_city, company_description])
 
 if printout == "y":
-    for i in range(len(company_name_list)):
-        print(str(i+1), "company_name: ", company_name_list[i])
-        print(str(i+1), "company_plz_city: ", company_plz_city_list[i])
-        print(str(i+1), "company_description: ", company_description_list[i])
+    for i in range(len(company_data_list)):
+        print(i, ": ", company_data_list[i])
 
 # Store results in .csv file
 header = ["company_name", "company_plz_city", "company_description"]
+
+with open('test.csv', 'w', encoding='UTF8', newline='') as f:
+    writer = csv.writer(f, delimiter=";")
+    writer.writerow(header)
+    writer.writerows(company_data_list)
 
 """
 Clean and close

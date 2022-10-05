@@ -82,27 +82,28 @@ driver.quit()
 # --- 2. END GET NUM_OF_COMPANIES --- 2. END GET NUM_OF_COMPANIES --- 2. END GET NUM_OF_COMPANIES --- 2. END GET NUM_OF_COMPANIES
 
 # --- 3. ITERATE THROUGH SITES --- 3. ITERATE THROUGH SITES --- 3. ITERATE THROUGH SITES --- 3. ITERATE THROUGH SITES ---
-# Start webdriver and wait 5 seconds until the website has load and the cookie button popped up
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-driver.get(str("https://www.wlw.de/de/suche/"+get_variables))
-print("Info: Loading website...")
-time.sleep(5)
+for i in range(int(total_num_of_sites)):
+    # Start webdriver and wait 5 seconds until the website has load and the cookie button popped up
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+    driver.get(str("https://www.wlw.de/de/suche/page/"+str(i+1)+"/"+get_variables))
+    print("Info: Loading website...")
+    time.sleep(5)
 
-# Remove cookie button
-btn_cookie = driver.find_element(By.ID, "CybotCookiebotDialogFooterButtonAcceptAll")
-btn_cookie.click()
-print("Info: Cookie button clicked \nInfo: Searching for companies...")
+    # Remove cookie button
+    btn_cookie = driver.find_element(By.ID, "CybotCookiebotDialogFooterButtonAcceptAll")
+    btn_cookie.click()
+    print("Info: Cookie button clicked \nInfo: Searching for companies...")
 
-# Iterate through list with 30 (default) items
-for i in range(30):
-    path_company_name = "//div[@class='flex flex-col']/div[" + str(i+1) + "]/a[@class='company-title-link']"
-    path_company_plz_city = "//div[@class='flex flex-col']/div[" + str(i+1) + "]//div[@class='address']"
-    path_company_description = "//div[@class='flex flex-col']/div[" + str(i+1) + "]/div[@class='description']"
+    # Iterate through list with 30 (default) items
+    for i in range(30):
+        path_company_name = "//div[@class='flex flex-col']/div[" + str(i+1) + "]/a[@class='company-title-link']"
+        path_company_plz_city = "//div[@class='flex flex-col']/div[" + str(i+1) + "]//div[@class='address']"
+        path_company_description = "//div[@class='flex flex-col']/div[" + str(i+1) + "]/div[@class='description']"
 
-    company_name = driver.find_element(By.XPATH, path_company_name).get_attribute("innerHTML")
-    company_plz_city = driver.find_element(By.XPATH, path_company_plz_city).get_attribute("innerHTML")
-    company_description = driver.find_element(By.XPATH, path_company_description).get_attribute("innerHTML")
-    company_data_list.append([company_name, company_plz_city, company_description])
+        company_name = driver.find_element(By.XPATH, path_company_name).get_attribute("innerHTML")
+        company_plz_city = driver.find_element(By.XPATH, path_company_plz_city).get_attribute("innerHTML")
+        company_description = driver.find_element(By.XPATH, path_company_description).get_attribute("innerHTML")
+        company_data_list.append([company_name, company_plz_city, company_description])
 # --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES ---
 
 # --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS ---

@@ -88,8 +88,8 @@ if printout == "y":
 
 # Store results in .csv file
 header = ["company_name", "company_plz_city", "company_description"]
-
-with open('test.csv', 'w', encoding='UTF8', newline='') as f:
+file_name = input("Enter a name for the .csv to store results: ")
+with open(file_name+'.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f, delimiter=";")
     writer.writerow(header)
     writer.writerows(company_data_list)

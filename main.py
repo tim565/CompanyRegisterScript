@@ -64,9 +64,13 @@ btn_cookie = driver.find_element(By.ID, "CybotCookiebotDialogFooterButtonAcceptA
 btn_cookie.click()
 print("Info: Cookie button clicked \nInfo: Ready to start search")
 
-"""
-TODO: next steps
-"""
+print("Get company name of first: ")
+
+test = driver.find_element(By.XPATH, "//div[@class='flex flex-col']/div[1]/a[@class='company-title-link']").get_attribute("innerHTML")
+print(test)
+
+
+# For later use
 company_name_list = []
 company_plz_city_list = []
 company_description_list = []

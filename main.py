@@ -42,12 +42,13 @@ if supplierTypesInput == "y":
     supplierTypes = input("Use one or more of these: Hersteller_Händler_Dienstleister_Großhändler; supplierTypes: ")
     url = url + "&supplierTypes=" + supplierTypes
 
-employeeCountsInput = input("Insert y to add number of employees, insert n for no number of employees then press enter:")
+employeeCountsInput = input("Insert y to add number of employees, insert n for no number of employees then press enter: ")
 if employeeCountsInput == "y":
     employeeCounts = input("Use this format: 10-49_50-199_200%2B; emplyeeCounts: ")
     url = url + "&employeeCounts=" + employeeCounts
 
 print("Full url:", url)
+printout = input("Insert y if you would like to print all companies in terminal: ")
 input("Press enter to start company search")
 
 """
@@ -84,10 +85,16 @@ for i in range(30):
     path_company_description = "//div[@class='flex flex-col']/div[" + str(i+1) + "]/div[@class='description']"
     company_description = driver.find_element(By.XPATH, path_company_description).get_attribute("innerHTML")
     company_description_list.append(company_description)
+    # TODO: filter out <em>q</em> and that are set by website
 
-print(company_name_list)
-print(company_plz_city_list)
-print(company_description_list)
+if printout == "y":
+    for i in range(len(company_name_list)):
+        print(str(i+1), "company_name: ", company_name_list[i])
+        print(str(i+1), "company_plz_city: ", company_plz_city_list[i])
+        print(str(i+1), "company_description: ", company_description_list[i])
+
+# Store results in .csv file
+header = ["company_name", "company_plz_city", "company_description"]
 
 """
 Clean and close

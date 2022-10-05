@@ -6,58 +6,62 @@ Created on Mon Oct  3 18:15:59 2022 at Grenoble École de Management (Grenoble, 
 """
 import time
 import csv
+import math
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 
 from selenium.webdriver.common.by import By
 
+# Class variables
+company_data_list = []
+get_variables = ""
+
+# --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS
 """
 The user needs to specify parameters for the search in the database. 
 The parameter 'q' is the only mandatory, it specifies a word for the search engine. All other params are optional. 
 """
 print("--- Company Register Started ---")
 q = input("q: ")
-url = "https://www.wlw.de/de/suche?q=" + q
+get_variables = "?q=" + q
 
 locationInput = input("Insert y to add a location, insert n for no location, then press enter: ")
 if locationInput == "y":
     locationCountry = "DE"
-    url = url + "&locationCountry=" + locationCountry
+    get_variables = get_variables + "&locationCountry=" + locationCountry
     locationKind = "other"
-    url = url + "&locationKind=" + locationKind
+    get_variables = get_variables + "&locationKind=" + locationKind
 
     locationLatitude = input("locationLatitude: ")
-    url = url + "&locationLatitude=" + locationLatitude
+    get_variables = get_variables + "&locationLatitude=" + locationLatitude
     locationLongitude = input("locationLongitude: ")
-    url = url + "&locationLongitude=" + locationLongitude
+    get_variables = get_variables + "&locationLongitude=" + locationLongitude
 
     locationName = input("locationName: ")
-    url = url + "&locationName=" + locationName + ",%20Deutschland"
+    get_variables = get_variables + "&locationName=" + locationName + ",%20Deutschland"
 
     locationRadius = input("locationRadiusInput: ")
-    url = url + "&locationRadius=" + locationRadius + "km"
+    get_variables = get_variables + "&locationRadius=" + locationRadius + "km"
 
 supplierTypesInput = input("Insert y to add a supplier type, insert n for no supplier type, then press enter: ")
 if supplierTypesInput == "y":
     supplierTypes = input("Use one or more of these: Hersteller_Händler_Dienstleister_Großhändler; supplierTypes: ")
-    url = url + "&supplierTypes=" + supplierTypes
+    get_variables = get_variables + "&supplierTypes=" + supplierTypes
 
 employeeCountsInput = input("Insert y to add number of employees, insert n for no number of employees then press enter: ")
 if employeeCountsInput == "y":
     employeeCounts = input("Use this format: 10-49_50-199_200%2B; emplyeeCounts: ")
-    url = url + "&employeeCounts=" + employeeCounts
+    get_variables = get_variables + "&employeeCounts=" + employeeCounts
 
-print("Full url:", url)
+print("HTTP GET variables:", get_variables)
 printout = input("Insert y if you would like to print all companies in terminal: ")
 input("Press enter to start company search")
+# --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS
 
-"""
-After the search params are entered and the URL is generated, the script uses selenium to access the website. 
-"""
-# Start webdriver and wait 5 seconds until the website has load and the cookie button popped up
+# --- 2. GET NUM_OF_COMPANIES --- 2. GET NUM_OF_COMPANIES --- 2. GET NUM_OF_COMPANIES --- 2. GET NUM_OF_COMPANIES --- 2. GET NUM_OF_COMPANIES
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
-driver.get(url)
+driver.get(str("https://www.wlw.de/de/suche/"+get_variables))
 print("Info: Loading website...")
 time.sleep(5)
 
@@ -66,12 +70,31 @@ btn_cookie = driver.find_element(By.ID, "CybotCookiebotDialogFooterButtonAcceptA
 btn_cookie.click()
 print("Info: Cookie button clicked \nInfo: Searching for companies...")
 
-# TODO: specify page number before iterating (by change in the URL)
+total_num_of_companies_with_text = driver.find_element(By.XPATH, "//a[@class='search-tab-link search-tabs-supplier-link active']").get_attribute("innerHTML")
+total_num_of_companies = ""
+for i in range(len(total_num_of_companies_with_text)):
+    if total_num_of_companies_with_text[i] == "0" or total_num_of_companies_with_text[i] == "1" or total_num_of_companies_with_text[i] == "2" or total_num_of_companies_with_text[i] == "3" or total_num_of_companies_with_text[i] == "4" or total_num_of_companies_with_text[i] == "5" or total_num_of_companies_with_text[i] == "6" or total_num_of_companies_with_text[i] == "7" or total_num_of_companies_with_text[i] == "8" or total_num_of_companies_with_text[i] == "9":
+        total_num_of_companies = total_num_of_companies + total_num_of_companies_with_text[i]
+num_of_companies_rest = str(int(total_num_of_companies)%30)
+total_num_of_sites = str(math.trunc(int(total_num_of_companies)/30))
+print("Info: Total number of sites in this search: ", total_num_of_sites, ", rest: ", num_of_companies_rest)
+driver.quit()
+# --- 2. END GET NUM_OF_COMPANIES --- 2. END GET NUM_OF_COMPANIES --- 2. END GET NUM_OF_COMPANIES --- 2. END GET NUM_OF_COMPANIES
+
+# --- 3. ITERATE THROUGH SITES --- 3. ITERATE THROUGH SITES --- 3. ITERATE THROUGH SITES --- 3. ITERATE THROUGH SITES ---
+# Start webdriver and wait 5 seconds until the website has load and the cookie button popped up
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+driver.get(str("https://www.wlw.de/de/suche/"+get_variables))
+print("Info: Loading website...")
+time.sleep(5)
+
+# Remove cookie button
+btn_cookie = driver.find_element(By.ID, "CybotCookiebotDialogFooterButtonAcceptAll")
+btn_cookie.click()
+print("Info: Cookie button clicked \nInfo: Searching for companies...")
 
 # Iterate through list with 30 (default) items
-company_data_list = []
 for i in range(30):
-    # TODO: currently only full sites with 30 items can be accessed; check for next item and break if necessary
     path_company_name = "//div[@class='flex flex-col']/div[" + str(i+1) + "]/a[@class='company-title-link']"
     path_company_plz_city = "//div[@class='flex flex-col']/div[" + str(i+1) + "]//div[@class='address']"
     path_company_description = "//div[@class='flex flex-col']/div[" + str(i+1) + "]/div[@class='description']"
@@ -79,9 +102,10 @@ for i in range(30):
     company_name = driver.find_element(By.XPATH, path_company_name).get_attribute("innerHTML")
     company_plz_city = driver.find_element(By.XPATH, path_company_plz_city).get_attribute("innerHTML")
     company_description = driver.find_element(By.XPATH, path_company_description).get_attribute("innerHTML")
-    # TODO: filter out <em>q</em> and &amp that are set by website
     company_data_list.append([company_name, company_plz_city, company_description])
+# --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES ---
 
+# --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS ---
 if printout == "y":
     for i in range(len(company_data_list)):
         print(i, ": ", company_data_list[i])
@@ -94,11 +118,7 @@ with open(file_name+'.csv', 'w', encoding='UTF8', newline='') as f:
     writer.writerow(header)
     writer.writerows(company_data_list)
 
-
-"""
-Clean and close
-"""
 time.sleep(10)
 print("Info: Timer out, quitting website...")
-driver.quit()
 print("--- Company Register Finished --- (Code: 0) ")
+# --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS ---

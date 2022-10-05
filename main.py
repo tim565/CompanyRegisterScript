@@ -94,6 +94,7 @@ with open('test.csv', 'w', encoding='UTF8', newline='') as f:
     writer.writerow(header)
     writer.writerows(company_data_list)
 
+
 """
 Clean and close
 """

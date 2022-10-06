@@ -16,6 +16,21 @@ from webdriver_manager.chrome import ChromeDriverManager
 company_data_list = []
 get_variables = ""
 
+def removeHtmlTags(item):
+    for a in range(len(item)):
+        if item[a] == "<" and item[a+1] == "e" and item[a+2] == "m" and item[a+3] == ">":
+            item = item[:a] + item[(a+4):]
+            break
+    for a in range(len(item)):
+        if item[a] == "<" and item[a+1] == "/" and item[a+2] == "e" and item[a+3] == "m" and item[a+4] == ">":
+            item = item[:a] + item[(a+5):]
+            break
+    for a in range(len(item)):
+        if item[a] == "&" and item[a+1] == "a" and item[a+2] == "m" and item[a+3] == "p":
+            item = item[:a-1] + item[(a+5):]
+            break
+    return item
+
 # --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS
 """
 The user needs to specify parameters for the search in the database. 
@@ -102,38 +117,18 @@ for i in range(int(total_num_of_sites)):
         company_name = driver.find_element(By.XPATH, path_company_name).get_attribute("innerHTML")
         company_plz_city = driver.find_element(By.XPATH, path_company_plz_city).get_attribute("innerHTML")
         company_description = driver.find_element(By.XPATH, path_company_description).get_attribute("innerHTML")
-
         # --- 3.1 Remove html items left in strings --- 3.1 Remove html items left in strings --- 3.1 Remove html items left in strings
-        for a in range(len(company_name)):
-            if company_name[a] == "<" and company_name[a+1] == "e" and company_name[a+2] == "m" and company_name[a+3] == ">":
-                print("Remove em: ", company_name)
-                company_name = company_name[:a] + company_name[(a+4):]
-                print("Final em: ", company_name)
-                break
-
-        for a in range(len(company_name)):
-            if company_name[a] == "<" and company_name[a+1] == "/" and company_name[a+2] == "e" and company_name[a+3] == "m" and company_name[a+4] == ">":
-                print("Remove /em: ", company_name)
-                company_name = company_name[:a] + company_name[(a+5):]
-                print("Final /em: ", company_name)
-                break
-
-        for a in range(len(company_name)):
-            if company_name[a] == "&" and company_name[a+1] == "a" and company_name[a+2] == "m" and company_name[a+3] == "p":
-                print("Remove amp: ", company_name)
-                company_name = company_name[:a-1] + company_name[(a+5):]
-                print("Final amp: ", company_name)
-                break
-# --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings
-
+        company_name = removeHtmlTags(company_name)
+        company_plz_city = removeHtmlTags(company_plz_city)
+        company_description = removeHtmlTags(company_description)
+        if printout == "y":
+            print("Output Nr: ",i,", Name: ",company_name,", Plz-City: ",company_plz_city,", Description: ",company_description)
+    # --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings
         company_data_list.append([company_name, company_plz_city, company_description])
+
 # --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES ---
 
 # --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS ---
-if printout == "y":
-    for i in range(len(company_data_list)):
-        print(i, ": ", company_data_list[i])
-
 # Store results in .csv file
 header = ["company_name", "company_plz_city", "company_description"]
 file_name = input("Enter a name for the .csv to store results: ")

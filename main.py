@@ -9,9 +9,8 @@ import csv
 import math
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
-
 from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 
 # Class variables
 company_data_list = []
@@ -103,6 +102,30 @@ for i in range(int(total_num_of_sites)):
         company_name = driver.find_element(By.XPATH, path_company_name).get_attribute("innerHTML")
         company_plz_city = driver.find_element(By.XPATH, path_company_plz_city).get_attribute("innerHTML")
         company_description = driver.find_element(By.XPATH, path_company_description).get_attribute("innerHTML")
+
+        # --- 3.1 Remove html items left in strings --- 3.1 Remove html items left in strings --- 3.1 Remove html items left in strings
+        for a in range(len(company_name)):
+            if company_name[a] == "<" and company_name[a+1] == "e" and company_name[a+2] == "m" and company_name[a+3] == ">":
+                print("Remove em: ", company_name)
+                company_name = company_name[:a] + company_name[(a+4):]
+                print("Final em: ", company_name)
+                break
+
+        for a in range(len(company_name)):
+            if company_name[a] == "<" and company_name[a+1] == "/" and company_name[a+2] == "e" and company_name[a+3] == "m" and company_name[a+4] == ">":
+                print("Remove /em: ", company_name)
+                company_name = company_name[:a] + company_name[(a+5):]
+                print("Final /em: ", company_name)
+                break
+
+        for a in range(len(company_name)):
+            if company_name[a] == "&" and company_name[a+1] == "a" and company_name[a+2] == "m" and company_name[a+3] == "p":
+                print("Remove amp: ", company_name)
+                company_name = company_name[:a-1] + company_name[(a+5):]
+                print("Final amp: ", company_name)
+                break
+# --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings
+
         company_data_list.append([company_name, company_plz_city, company_description])
 # --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES ---
 

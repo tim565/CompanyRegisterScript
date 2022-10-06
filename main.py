@@ -29,7 +29,23 @@ def removeHtmlTags(item):
         if item[a] == "&" and item[a+1] == "a" and item[a+2] == "m" and item[a+3] == "p":
             item = item[:a-1] + item[(a+5):]
             break
+    for a in range(len(item)):
+        if item[a] == ";":
+            item = item[:a] + "," + item[a:]
+            break
     return item
+
+def getCountry(item):
+    country = item[:2]
+    return country
+
+def getPlz(item):
+    plz = item[3:8]
+    return plz
+
+def getCity(item):
+    city = item[9:]
+    return city
 
 # --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS --- 1. INPUTS
 """
@@ -57,6 +73,11 @@ if locationInput == "y":
 
     locationRadius = input("locationRadiusInput: ")
     get_variables = get_variables + "&locationRadius=" + locationRadius + "km"
+
+locationLinkInput = input("Insert y to add a link for the location [exclude & signs], then press enter: ")
+if locationLinkInput == "y":
+    locationLink = input("Link for location: ")
+    get_variables = "?q=" + q + "&" + locationLink
 
 supplierTypesInput = input("Insert y to add a supplier type, insert n for no supplier type, then press enter: ")
 if supplierTypesInput == "y":
@@ -121,16 +142,16 @@ for i in range(int(total_num_of_sites)):
         company_name = removeHtmlTags(company_name)
         company_plz_city = removeHtmlTags(company_plz_city)
         company_description = removeHtmlTags(company_description)
+        # --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings
+
         if printout == "y":
             print("Output Nr: ",i,", Name: ",company_name,", Plz-City: ",company_plz_city,", Description: ",company_description)
-    # --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings --- 3.1 END Remove html items left in strings
-        company_data_list.append([company_name, company_plz_city, company_description])
-
+        company_data_list.append([company_name, getCountry(company_plz_city), getPlz(company_plz_city), getCity(company_plz_city), company_description])
 # --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES --- 3. END ITERATE THROUGH SITES ---
 
 # --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS --- 4. OUTPUTS ---
 # Store results in .csv file
-header = ["company_name", "company_plz_city", "company_description"]
+header = ["company_name", "company_country", "company_plz", "company_city", "company_description"]
 file_name = input("Enter a name for the .csv to store results: ")
 with open(file_name+'.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f, delimiter=";")
@@ -139,5 +160,6 @@ with open(file_name+'.csv', 'w', encoding='UTF8', newline='') as f:
 
 time.sleep(10)
 print("Info: Timer out, quitting website...")
+driver.quit()
 print("--- Company Register Finished --- (Code: 0) ")
 # --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS --- 4. END OUTPUTS ---

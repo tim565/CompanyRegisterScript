@@ -10,7 +10,7 @@ import math
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+# from webdriver_manager.chrome import ChromeDriverManager
 
 # Class variables
 company_data_list = []
@@ -95,7 +95,9 @@ input("Press enter to start company search")
 # --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS --- 1. END INPUTS
 
 # --- 2. GET NUM_OF_COMPANIES --- 2. GET NUM_OF_COMPANIES --- 2. GET NUM_OF_COMPANIES --- 2. GET NUM_OF_COMPANIES --- 2. GET NUM_OF_COMPANIES
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+
+# driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install())) ++++++++++++
+driver = webdriver.Chrome(service=ChromeService())
 driver.get(str("https://www.wlw.de/de/suche/"+get_variables))
 print("Info: Loading website...")
 time.sleep(5)
@@ -119,7 +121,8 @@ driver.quit()
 # --- 3. ITERATE THROUGH SITES --- 3. ITERATE THROUGH SITES --- 3. ITERATE THROUGH SITES --- 3. ITERATE THROUGH SITES ---
 for i in range(int(total_num_of_sites)):
     # Start webdriver and wait 5 seconds until the website has load and the cookie button popped up
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+    # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install())) +++++++
+    driver = webdriver.Chrome(service=ChromeService())
     driver.get(str("https://www.wlw.de/de/suche/page/"+str(i+1)+"/"+get_variables))
     print("Info: Loading website...")
     time.sleep(5)

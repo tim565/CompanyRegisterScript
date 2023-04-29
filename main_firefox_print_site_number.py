@@ -57,6 +57,7 @@ print("--- Company Register Started ---")
 q = input("q: ")
 get_variables = "?q=" + q
 
+siteNumber = 0
 siteNumberInput = input("Insert y to add a number of site to start from, then press enter: ")
 if siteNumberInput == "y":
     siteNumber = int(input("Site number: ") or "0")
